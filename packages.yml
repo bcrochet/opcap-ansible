@@ -12,12 +12,18 @@
     (package_manifest_list.resources is not defined) or
     (package_manifest_list.resources | length == 0)
   when: packages | default([]) | length == 0
+  tags:
+    - inventory
+    - cleanup
 - name: Get subscription data from OpenShift
   ansible.builtin.set_fact:
     openshift_sub_info: "{{ package_manifest_list.resources |
                             map(attribute='status') |
                             list }}"
   no_log: true
+  tags:
+    - inventory
+    - cleanup
 - name: Add each to list
   ansible.builtin.set_fact:
     packages: >
@@ -25,3 +31,6 @@
         {"name": item.packageName, "catalog_source": item.catalogSource, "catalog_source_namespace": item.catalogSourceNamespace}
       ] }}
   loop: "{{ openshift_sub_info }}"
+  tags:
+    - inventory
+    - cleanup
